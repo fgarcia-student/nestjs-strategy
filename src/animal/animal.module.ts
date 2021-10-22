@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import { ClassProvider, DynamicModule, Module, Type } from '@nestjs/common';
 import { AnimalService } from './animal.service';
 import { AnimalController } from './animal.controller';
-import { AnimalStrategy } from './strategy/animal.strategy';
+import { AnimalEnum } from './strategy/animal.enum';
 import { CatService } from './strategy/cat.service.strategy';
 import { DogService } from './strategy/dog.service.strategy';
 
@@ -16,12 +16,12 @@ export class AnimalModule {
       module: AnimalModule,
       controllers: [AnimalController],
       providers: [AnimalClassProvider],
-      exports: [AnimalClassProvider],
+      exports: [AnimalService],
     };
   }
 
   private static getClassProvider(): ClassProvider<AnimalService> {
-    const animalStrategy = process.env.ANIMAL_STRATEGY as AnimalStrategy;
+    const animalStrategy = process.env.ANIMAL_STRATEGY as AnimalEnum;
     // eslint-disable-next-line prettier/prettier
     const AnimalServiceClass = AnimalModule.getClassFromStrategy(animalStrategy);
     return {
@@ -31,12 +31,12 @@ export class AnimalModule {
   }
 
   private static getClassFromStrategy(
-    strategy: AnimalStrategy,
+    strategy: AnimalEnum,
   ): Type<AnimalService> {
     switch (strategy) {
-      case AnimalStrategy.CAT:
+      case AnimalEnum.CAT:
         return CatService;
-      case AnimalStrategy.DOG:
+      case AnimalEnum.DOG:
         return DogService;
       default:
         return AnimalService;
